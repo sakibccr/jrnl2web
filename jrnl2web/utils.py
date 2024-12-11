@@ -31,8 +31,9 @@ def ensure_directory_exists(directory):
     Returns:
         None
     """
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not directory.exists():
+        directory.mkdir()
+
 
 def sanitize_filename(filename):
     """

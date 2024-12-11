@@ -1,8 +1,11 @@
 import os
+import pathlib
 from jinja2 import Environment, FileSystemLoader
 from jrnl2web.utils import ensure_directory_exists, copy_static_files
 
-def setup_jinja_env(template_dir="jrnl2web/templates"):
+THEME_DIR = pathlib.Path('themes/')
+
+def setup_jinja_env(template_dir):
     """
     Set up the Jinja2 environment for rendering templates.
 
@@ -29,20 +32,21 @@ def render_template(env, template_name, context):
     template = env.get_template(template_name)
     return template.render(context)
 
-def export_html(entries, output_dir, template_dir="jrnl2web/templates"):
+def export_html(entries, output_dir, theme):
     """
     Export the HTML files based on journal entries.
 
     Args:
         entries (list): List of dictionaries containing HTML-ready journal entries.
         output_dir (str): Directory where the HTML files will be generated.
-        template_dir (str): Directory containing HTML templates.
+        theme (str): Directory containing HTML templates.
 
     Returns:
         None
     """
+
     # Set up the Jinja2 environment
-    env = setup_jinja_env(template_dir)
+    env = setup_jinja_env(THEME_DIR / theme)
 
     # Ensure output directory exists
     ensure_directory_exists(output_dir)
@@ -51,8 +55,8 @@ def export_html(entries, output_dir, template_dir="jrnl2web/templates"):
     copy_static_files('static/', output_dir)
 
     # Ensure output directory exists
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not output_dir.exists():
+        output_dir.mkdir()
 
     # Generate individual entry pages
     for index, entry in enumerate(entries):

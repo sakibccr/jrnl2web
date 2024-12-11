@@ -1,51 +1,47 @@
-import argparse
-import os
-from jrnl2web.converter import convert_jrnl_to_html
+import click
+import pathlib
+import sys
+import json
 from jrnl2web.exporter import export_html
+from rich import print
 
-def main():
-    # Set up argument parsing
-    parser = argparse.ArgumentParser(
-        description="Convert jrnl entries to HTML for deployment as a website."
-    )
-    parser.add_argument(
-        "--input",
-        "-i",
-        required=True,
-        help="Path to the input jrnl file (e.g., 'sample.jrnl')."
-    )
-    parser.add_argument(
-        "--output",
-        "-o",
-        required=True,
-        help="Path to the output directory where HTML files will be generated."
-    )
-    parser.add_argument(
-        "--template",
-        "-t",
-        default="default",
-        help="Specify a template to use (default: 'default')."
-    )
-    args = parser.parse_args()
+BASE_DIR = pathlib.Path(__file__).absolute().parent
+THEME_DIR = BASE_DIR / 'themes'
 
-    # Validate input file
-    if not os.path.exists(args.input):
-        print(f"Error: Input file '{args.input}' not found.")
-        exit(1)
+def get_themes():
+    themes = [item.name for item in pathlib.Path(THEME_DIR).iterdir() if item.is_dir()]
+    return tuple(themes)
 
-    # Validate or create output directory
-    if not os.path.exists(args.output):
-        os.makedirs(args.output)
+@click.command(help="This is a tool to convert jrnl entries to a collection of HTML pages which can be deployed as a static website.")
+@click.option("-i", "--input",
+              type=click.File('r', ),
+              default=sys.stdin,
+              help="Path to the input jrnl file (e.g. ~/.local/share/jrnl/journal.txt)."
+    )
+@click.option("-o", "--output",
+              help="Path to the output directory where HTML files will be generated."
+    )
+@click.option("-t", "--theme",
+              default="mini",
+              type=click.Choice(get_themes()),
+              help="Specify a theme to use (default: 'mini')."
+    )
+# @click.option("-", "--input", help="") Convert jrnl entries to HTML for deployment as a website.
+def main(input, output, theme):
+
+    output = pathlib.Path(BASE_DIR / output)
+    templates = pathlib.Path(THEME_DIR / theme)
 
     # Convert jrnl entries to HTML content
-    print(f"Converting '{args.input}' to HTML...")
-    entries = convert_jrnl_to_html(args.input, template=args.template)
+    click.echo(f"Converting '{input}' to HTML...")
+    data = json.load(input)
+    entries = data.get("entries", [])
 
     # Export the converted entries to the output directory
-    print(f"Exporting HTML files to '{args.output}'...")
-    export_html(entries, args.output)
+    click.echo(f"Exporting HTML files to '{output}'...")
+    export_html(entries, output, theme)
 
-    print("Conversion complete! Your journal entries are now available as a website.")
+    click.echo("Conversion complete! Your journal entries are now available as a website.")
 
 if __name__ == "__main__":
     main()

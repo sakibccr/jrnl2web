@@ -4,7 +4,7 @@
     <h2>{{ entry.title }}</h2>
     <p><strong>Date:</strong> {{ entry.date }}</p>
     <div>
-        {{ entry.content | safe }}
+        {{ entry.body | safe }}
     </div>
     {% if entry.tags %}
     <p><strong>Tags:</strong> {{ entry.tags | join(', ') }}</p>
