@@ -1,0 +1,29 @@
+{
+  "tags": {},
+  "entries": [
+    {
+      "title": "Alright this is the first journal entry from command line. Hurray!",
+      "body": "",
+      "date": "2024-12-08",
+      "time": "14:18",
+      "tags": [],
+      "starred": false
+    },
+    {
+      "title": "What the heck was this thing!",
+      "body": "So this is the first extended entry. Let's see how this looks like. Later, we will add images here too.",
+      "date": "2024-12-08",
+      "time": "14:18",
+      "tags": [],
+      "starred": false
+    },
+    {
+      "title": "help",
+      "body": "",
+      "date": "2024-12-11",
+      "time": "17:40",
+      "tags": [],
+      "starred": false
+    }
+  ]
+}

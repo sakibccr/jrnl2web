@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+    <h2>{{ entry.title }}</h2>
+    <p><strong>Date:</strong> {{ entry.date }}</p>
+    <div>
+        {{ entry.content | safe }}
+    </div>
+    {% if entry.tags %}
+    <p><strong>Tags:</strong> {{ entry.tags | join(', ') }}</p>
+    {% endif %}
+</article>
+<a href="index.html">Back to Journal Index</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<ul>
+    {% for entry in entries %}
+    <li>
+        <a href="{{ entry.filename }}">{{ entry.title }}</a> 
+        - {{ entry.date }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
