@@ -3,8 +3,7 @@
 <ul>
     {% for entry in entries %}
     <li>
-        <a href="{{ entry.filename }}">{{ entry.title }}</a> 
-        - {{ entry.date }}
+        {{ entry.date }} - <a href="{{ entry.url }}">{{ entry.title }}</a> 
     </li>
     {% endfor %}
 </ul>

@@ -1,7 +1,7 @@
-import os
 import pathlib
 from jinja2 import Environment, FileSystemLoader
 from jrnl2web.utils import ensure_directory_exists, copy_static_files
+from slugify import slugify
 
 THEME_DIR = pathlib.Path('themes/')
 
@@ -34,7 +34,7 @@ def render_template(env, template_name, context):
 
 def export_html(entries, output_dir, theme):
     """
-    Export the HTML files based on journal entries.
+    Export HTML files based on journal entries.
 
     Args:
         entries (list): List of dictionaries containing HTML-ready journal entries.
@@ -49,40 +49,31 @@ def export_html(entries, output_dir, theme):
     env = setup_jinja_env(THEME_DIR / theme)
 
     # Ensure output directory exists
-    ensure_directory_exists(output_dir)
+    output_dir = pathlib.Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Copy static files to output
-    copy_static_files('static/', output_dir)
-
-    # Ensure output directory exists
-    if not output_dir.exists():
-        output_dir.mkdir()
+    entry_list = []
 
     # Generate individual entry pages
-    for index, entry in enumerate(entries):
-        filename = f"entry_{index + 1}.html"
-        filepath = os.path.join(output_dir, filename)
-        context = {
-            "entry": entry,
-            "title": entry["title"]
-        }
-        html_content = render_template(env, "entry.html", context)
+    for entry in entries:
+        filename = slugify(entry["title"])
+        entry_dir = output_dir / filename
+        entry_dir.mkdir(parents=True, exist_ok=True)
 
-        with open(filepath, "w", encoding="utf-8") as file:
-            file.write(html_content)
+        entry["url"] = entry_dir.relative_to(output_dir)
+        html_content = render_template(env, "entry.html", {"entry": entry, "title": "My Journal"})
+
+        filepath = entry_dir / "index.html"
+        filepath.write_text(html_content)
+        entry_list.append(entry)
         print(f"Generated: {filepath}")
 
     # Generate the index page
-    index_filepath = os.path.join(output_dir, "index.html")
+    index_filepath = output_dir / "index.html"
     context = {
-        "entries": [
-            {"title": entry["title"], "date": entry["date"], "filename": f"entry_{i + 1}.html"}
-            for i, entry in enumerate(entries)
-        ],
-        "title": "Journal Index"
+        "entries": entry_list,
+        "title": "My Journal"
     }
     index_content = render_template(env, "index.html", context)
-
-    with open(index_filepath, "w", encoding="utf-8") as file:
-        file.write(index_content)
+    index_filepath.write_text(index_content)
     print(f"Generated: {index_filepath}")

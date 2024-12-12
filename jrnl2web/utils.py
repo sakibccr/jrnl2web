@@ -1,7 +1,5 @@
 import os
 import math
-
-
 import shutil
 
 def copy_static_files(static_dir, output_dir):
@@ -34,21 +32,6 @@ def ensure_directory_exists(directory):
     if not directory.exists():
         directory.mkdir()
 
-
-def sanitize_filename(filename):
-    """
-    Sanitize a string to make it safe for use as a filename.
-
-    Args:
-        filename (str): The original string.
-
-    Returns:
-        str: Sanitized filename.
-    """
-    invalid_chars = '<>:"/\\|?*'
-    for char in invalid_chars:
-        filename = filename.replace(char, "_")
-    return filename.strip()
 
 def truncate_text(text, max_length=100):
     """
